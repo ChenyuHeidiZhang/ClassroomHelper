@@ -2,37 +2,44 @@ package com.jhu.chenyuzhang.classroomhelper;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Environment;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.SparseArray;
-import android.widget.EditText;
+import android.util.Base64;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.vision.Frame;
-import com.google.android.gms.vision.text.TextBlock;
-import com.google.android.gms.vision.text.TextRecognizer;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class EquationRecognitionActivity extends AppCompatActivity {
 
     ImageView imageView;
-    //TextView tv_display;
 
     public static final int REQUEST_PERM_WRITE_STORAGE = 102;
     static final int REQUEST_TAKE_PHOTO = 100;
 
+    private TextView mTextViewResult;
+
+    public volatile static Bitmap capturedBitmap;
+    private static final String KEY_BITMAP = "keyBitmap";
+    public SharedPreferences prefBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +47,7 @@ public class EquationRecognitionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_equation_recognition);
 
         imageView = findViewById(R.id.photoImage_eq);
-        //tv_display = findViewById(R.id.tv_display);
+        mTextViewResult = findViewById(R.id.text_view_result);
 
         //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         //startActivityForResult(intent, 0);
@@ -57,6 +64,9 @@ public class EquationRecognitionActivity extends AppCompatActivity {
         }
 
         takePhoto();
+
+        new Call().execute();
+
     }
 
     /*protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -64,10 +74,6 @@ public class EquationRecognitionActivity extends AppCompatActivity {
         Bitmap bitmap = (Bitmap)data.getExtras().get("data");
         imageView.setImageBitmap(bitmap);
     } */
-
-    //private void openGallery() {
-    //    Intent
-    //}
 
 
     public void takePhoto() {
@@ -81,10 +87,22 @@ public class EquationRecognitionActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_TAKE_PHOTO:
-                    Bitmap capturedBitmap = (Bitmap) returnIntent.getExtras().get("data");
+                    capturedBitmap = (Bitmap) returnIntent.getExtras().get("data");
 
                     imageView.setImageBitmap(capturedBitmap);
-                    saveImageToGallery(capturedBitmap);
+
+                    //saveImageToGallery(capturedBitmap);
+
+                    //capturedBitmap.compress(Bitmap.CompressFormat.JPEG, 10, byteArrayOutputStream);
+
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    capturedBitmap.compress(Bitmap.CompressFormat.JPEG, 10, byteArrayOutputStream);
+                    byte[] byteArray = byteArrayOutputStream .toByteArray();
+                    String data = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+                    prefBitmap = getSharedPreferences("bitmap", MODE_PRIVATE);
+                    prefBitmap.edit().putString(KEY_BITMAP, data).apply();
+
                     break;
 
                 default:
@@ -93,7 +111,7 @@ public class EquationRecognitionActivity extends AppCompatActivity {
         }
     }
 
-    private void saveImageToGallery(Bitmap finalBitmap) {
+    /*private void saveImageToGallery(Bitmap finalBitmap) {
 
         String root = Environment.getExternalStorageDirectory().toString();
         File myDir = new File(root+"/saveImage");
@@ -120,7 +138,64 @@ public class EquationRecognitionActivity extends AppCompatActivity {
             e.printStackTrace();
             Toast.makeText(EquationRecognitionActivity.this, "Exception Throw", Toast.LENGTH_SHORT).show();
         }
-    }
+    }*/
 
+
+    private class Call extends AsyncTask<Void, Integer, String> {
+        @Override
+        protected String doInBackground(Void... params) {
+            OkHttpClient client = new OkHttpClient();
+
+            MediaType mediaType = MediaType.parse("application/json");
+
+            prefBitmap = getSharedPreferences("bitmap", MODE_PRIVATE);
+            final String data = prefBitmap.getString(KEY_BITMAP,"");
+
+            Log.d("data",data);
+
+//            System.out.println(data.substring(0, 40));
+            //String bseString = "{ \"src\" : \" " + "data:image/jpg;base64," + data + " \"  }";
+            String bseString = "{ \"src\" : \" " + data + " \"  }";
+            RequestBody body = RequestBody.create(mediaType, bseString);
+
+            Request request = new Request.Builder()
+                    .url("https://api.mathpix.com/v3/latex")
+                    .addHeader("content-type", "application/json")
+                    .addHeader("app_id", "garycloudyang_gmail_com")
+                    .addHeader("app_key", "43d5eeba93314d645135")
+                    .post(body)
+                    .build();
+
+            try {
+                System.out.print("Executed!");
+                Response response = client.newCall(request).execute();
+                String myResponse = response.body().string();
+
+                try {
+                    JSONObject Jobject = new JSONObject(myResponse);
+                    final String myLatex = Jobject.getString("latex");
+                    EquationRecognitionActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mTextViewResult.setText(myLatex);
+                        }
+                    });
+                } catch (JSONException e) {
+                }
+
+            } catch (IOException e) {
+                System.out.print("IO Error!");
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+    }
 
 }
