@@ -5,19 +5,19 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/nav_pic_notes"
             android:icon="@drawable/ic_menu_camera"
-            android:title="Picture Notes" />
+            android:title="Picture To Notes" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_equation_recognition"
             android:icon="@drawable/ic_menu_camera"
             android:title="Equation Recognition" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_audio_recording"
             android:icon="@drawable/ic_record_voice_18dp"
             android:title="Audio Recording" />
         <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/nav_setting"
             android:icon="@drawable/ic_menu_manage"
             android:title="Setting" />
     </group>
@@ -25,11 +25,11 @@
     <item android:title="Gallery">
         <menu>
             <item
-                android:id="@+id/nav_share"
+                android:id="@+id/nav_notes"
                 android:icon="@drawable/ic_notes_gallery"
                 android:title="Notes" />
             <item
-                android:id="@+id/nav_send"
+                android:id="@+id/nav_recording"
                 android:icon="@drawable/ic_audio_gallery"
                 android:title="Recording" />
         </menu>
