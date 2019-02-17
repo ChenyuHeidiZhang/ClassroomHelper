@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jhu.chenyuzhang.classroomhelper">
 
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,11 +21,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PictureToNotesActivity" />
+        <activity android:name=".PictureToNotesActivity">
+            <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES"
+                android:value="orc"></meta-data>
+        </activity>
         <activity android:name=".EquationRecognitionActivity" />
         <activity android:name=".AudioRecordingActivity" />
         <activity android:name=".NotesActivity" />
         <activity android:name=".RecordingsActivity"></activity>
+
     </application>
 
 </manifest>

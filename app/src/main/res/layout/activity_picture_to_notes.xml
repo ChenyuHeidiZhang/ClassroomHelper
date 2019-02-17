@@ -4,6 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PictureToNotesActivity">
+    tools:context=".PictureToNotesActivity"
+    android:background="@color/colorPrimaryDark">
+
+    <EditText
+        android:id="@+id/display"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="none"
+        />
+
 
 </android.support.constraint.ConstraintLayout>
