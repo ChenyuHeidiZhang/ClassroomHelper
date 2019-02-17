@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jhu.chenyuzhang.classroomhelper">
 
+    <uses-feature android:name="android.hardware.camera"
+        android:required="true" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 
     <application
@@ -21,14 +24,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PictureToNotesActivity">
-            <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES"
-                android:value="orc"></meta-data>
-        </activity>
+        <activity android:name=".PictureToNotesActivity"/>
         <activity android:name=".EquationRecognitionActivity" />
         <activity android:name=".AudioRecordingActivity" />
         <activity android:name=".NotesActivity" />
         <activity android:name=".RecordingsActivity"></activity>
+
+        <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES"
+            android:value="orc"></meta-data>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.example.android.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"></meta-data>
+        </provider>
 
     </application>
 

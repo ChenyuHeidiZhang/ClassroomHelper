@@ -7,12 +7,23 @@
     tools:context=".PictureToNotesActivity"
     android:background="@color/colorPrimaryDark">
 
+    <ImageView
+        android:id="@+id/photoImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
     <EditText
         android:id="@+id/display"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="none"
-        />
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="121dp" />
 
+    <TextView
+        android:id="@+id/tv_display"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="42dp" />
 
 </android.support.constraint.ConstraintLayout>
