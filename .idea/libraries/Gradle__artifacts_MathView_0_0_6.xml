@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: artifacts:MathView-0.0.6">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/MathView-0.0.6.aar/f56d80253039fc79129b34e4802bc956/jars/libs/chunk-templates-3.0.1.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/MathView-0.0.6.aar/f56d80253039fc79129b34e4802bc956/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/MathView-0.0.6.aar/f56d80253039fc79129b34e4802bc956/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

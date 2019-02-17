@@ -28,6 +28,8 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import io.github.kexanie.library.MathView;
+
 public class EquationRecognitionActivity extends AppCompatActivity {
 
     ImageView imageView;
@@ -36,6 +38,7 @@ public class EquationRecognitionActivity extends AppCompatActivity {
     static final int REQUEST_TAKE_PHOTO = 100;
 
     private TextView mTextViewResult;
+    private MathView formula_one;
 
     public volatile static Bitmap capturedBitmap;
     private static final String KEY_BITMAP = "keyBitmap";
@@ -48,6 +51,7 @@ public class EquationRecognitionActivity extends AppCompatActivity {
 
         imageView = findViewById(R.id.photoImage_eq);
         mTextViewResult = findViewById(R.id.text_view_result);
+        formula_one = findViewById(R.id.formula_one);
 
         //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         //startActivityForResult(intent, 0);
@@ -92,8 +96,6 @@ public class EquationRecognitionActivity extends AppCompatActivity {
                     imageView.setImageBitmap(capturedBitmap);
 
                     //saveImageToGallery(capturedBitmap);
-
-                    //capturedBitmap.compress(Bitmap.CompressFormat.JPEG, 10, byteArrayOutputStream);
 
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                     capturedBitmap.compress(Bitmap.CompressFormat.JPEG, 10, byteArrayOutputStream);
@@ -149,13 +151,13 @@ public class EquationRecognitionActivity extends AppCompatActivity {
             MediaType mediaType = MediaType.parse("application/json");
 
             prefBitmap = getSharedPreferences("bitmap", MODE_PRIVATE);
-            final String data = prefBitmap.getString(KEY_BITMAP,"");
+            String data = prefBitmap.getString(KEY_BITMAP,"");
 
             Log.d("data",data);
 
 //            System.out.println(data.substring(0, 40));
-            //String bseString = "{ \"src\" : \" " + "data:image/jpg;base64," + data + " \"  }";
-            String bseString = "{ \"src\" : \" " + data + " \"  }";
+            String bseString = "{ \"src\" : \" " + "data:image/jpg;base64," + data + " \"  }";
+            //String bseString = "{ \"src\" : \" " + data + " \"  }";
             RequestBody body = RequestBody.create(mediaType, bseString);
 
             Request request = new Request.Builder()
@@ -178,6 +180,7 @@ public class EquationRecognitionActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             mTextViewResult.setText(myLatex);
+                            formula_one.setText(myLatex);
                         }
                     });
                 } catch (JSONException e) {
